@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESTful User Data Simulator API</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        header {
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        pre {
+            background-color: #eee;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        code {
+            font-family: monospace;
+        }
+        .api-endpoint {
+            background-color: #e6f7ff;
+            border-left: 5px solid #0099ff;
+            padding: 10px;
+            margin: 15px 0;
+            font-size: 1.1em;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 80px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "./dataGenerator.js": "./dataGenerator.js",
+                "./api.js": "./api.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Simulated Random User Data API</h1>
+            <p>A client-side simulator for generating random user data structures suitable for front-end testing.</p>
+        </header>
+
+        <h2>API Endpoint (Simulated)</h2>
+        <div class="api-endpoint">
+            GET <code>/api/users</code>
+        </div>
+        
+        <h3>Parameters</h3>
+        <ul>
+            <li><code>results</code>: (Optional) The number of users to fetch (Max 50). Defaults to 1.</li>
+        </ul>
+
+        <h2>Live Test</h2>
+        <div>
+            <label for="results_input">Number of Results:</label>
+            <input type="number" id="results_input" value="5" min="1" max="50">
+            <button id="fetch_button">Generate Data</button>
+        </div>
+
+        <p>Response:</p>
+        <pre id="response_output">Click "Generate Data" to see the output...</pre>
+
+    </div>
+
+    <script type="module">
+        import { handleUsersRequest } from './api.js';
+
+        const resultsInput = document.getElementById('results_input');
+        const fetchButton = document.getElementById('fetch_button');
+        const responseOutput = document.getElementById('response_output');
+
+        function simulateFetch() {
+            let results = parseInt(resultsInput.value, 10);
+            if (isNaN(results) || results < 1) results = 1;
+            if (results > 50) results = 50;
+            resultsInput.value = results; // Update input if clamped
+
+            // Simulate parsing query parameters (URLSearchParams is used for convenience)
+            const params = new URLSearchParams();
+            params.set('results', results);
+
+            // Simulate API request handling
+            try {
+                const data = handleUsersRequest(params);
+                responseOutput.textContent = JSON.stringify(data, null, 4);
+            } catch (error) {
+                responseOutput.textContent = JSON.stringify({ error: "Failed to generate data", details: error.message }, null, 4);
+                console.error("API simulation error:", error);
+            }
+        }
+
+        fetchButton.addEventListener('click', simulateFetch);
+
+        // Initial load simulation
+        simulateFetch(); 
+    </script>
+</body>
+</html>
